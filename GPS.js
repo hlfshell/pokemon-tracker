@@ -15,13 +15,6 @@ class GPS {
 		this.location = null;
 	}
 
-	set status (status) {
-		this.status = {
-			lastUpdated: new Date(),
-			status: status
-		}
-	}
-
 	_connect(cb){
 		var self = this;
 		self.sp = new SerialPort.SerialPort(self.port, {
@@ -34,8 +27,8 @@ class GPS {
 		});
 
 		self.gps.on('data', function(data){
-			this.location = 
-
+			this.location = new Location(data.lat, data.long);
+			this.lastUpdated = new Date();
 			if(self.onUpdate) self.onUpdate();
 		});
 
@@ -47,28 +40,3 @@ class GPS {
 	}
 
 }
-
-/*
-
-var SerialPort = require('serialport');
-var port = new SerialPort.SerialPort('/dev/ttyAMA0', {
-  baudrate: 9600,
-  parser: SerialPort.parsers.readline('\r\n')
-});
-
-var GPS = require('gps');
-var gps = new GPS;
-
-gps.on('data', function(data) {
-  console.log(data, gps.state);
-});
-
-port.on('data', function(data) {
-  gps.update(data);
-});
-
-module.exports = gps;
-
-
-
-*/

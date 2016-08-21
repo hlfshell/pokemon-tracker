@@ -39,8 +39,19 @@ gps.connect(function(err){
 		process.exit(0);
 	}
 
-	gps.onUpdate = function(){
-		var currentLocation = gps.location 
-		if(!scanner)
+	gps.onUpdate = function(){ 
+		mainWindow.webContents.send('gps', gps.location);
+		if(!scanner){
+			scanner = new Scanner();
+			scanner._initTrainers(gps.location);
+			scanner.onScan = onScan;
+		} else {
+			scanner.update(gps.location);
+		}
 	}
 });
+
+//Function to be called upon scan info updates
+var onScan = function onScan(){
+	mainWindow.webContents.send('pokemon', scanner.detectedPokemon);
+};
