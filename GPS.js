@@ -2,6 +2,7 @@
 
 const gps = require('gps');
 const geolib = require('geolib');
+const Location = require('./Location.js');
 
 class GPS {
 
@@ -17,7 +18,7 @@ class GPS {
 	}
 
 	_connect(cb){
-		
+
 	}
 
 	_onUpdate(){

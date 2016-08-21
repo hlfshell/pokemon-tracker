@@ -1,6 +1,7 @@
 "use strict"
 
 const PokemonGo = require('pokemon-go-node-api');
+const Location = require('./Location.js');
 
 class Trainer{
 
@@ -12,26 +13,9 @@ class Trainer{
 
 		this.createPokeAPI();
 		this.connect();
-	}
+		this.onUpdate = function(){};
 
-	get password(){
-		return null;
-	}
-
-	get latitude(){
-		return this.location.coords.latitude;
-	}
-
-	get longitude(){
-		return this.location.coords.longitude;
-	}
-
-	set latitude(latitude){
-		this.location.coords.latitude = latitude;
-	}
-
-	set longitude(longitude){
-		this.location.coords.longitude = longitude;
+		this.pokemon = [];
 	}
 
 	set location(location){
@@ -67,30 +51,24 @@ class Trainer{
 		var self = this;
 		self.pokeAPI.Heartbeat(function(err, hb){
 			if(err) return self._heartbeatFailure(err);
-			let nearby = [];
+			// let nearby = [];
 			let here = [];
 
-			hb.cells.forEach(function(cell){
-				if(cell.NearbyPokemon.length <= 0) return;
+			//Until the tracker is fixed, anything outside of 70m is useless data :-(
+			// hb.cells.forEach(function(cell){
+			// 	if(cell.NearbyPokemon.length <= 0) return;
 
-				cell.NearbyPokemon.forEach(function(pokemon){
-					pokemon.name = pokeAPI.pokemonlist[parseInt(pokemon.PokedexNumber)-1].name;
-					nearby.push(pokemon);
-				});
-			});
+			// 	cell.NearbyPokemon.forEach(function(pokemon){
+			// 		pokemon.name = pokeAPI.pokemonlist[parseInt(pokemon.PokedexNumber)-1].name;
+			// 		nearby.push(pokemon);
+			// 	});
+			// });
 
 			hb.cells.forEach(function(cell){
 				if(cell.MapPokemon.length <= 0) return;
 				
 				cell.MapPokemon.forEach(function(pokemon){
 					pokemon.name = pokeAPI.pokemonlist[parseInt(pokemon.PokedexTypeId)-1].name;
-
-					pokemon.distance = geolib.getDistance(
-								{ latitude: location.coords.latitude, longitude: location.coords.longitude },
-								{ latitude: pokemon.Latitude, longitude: pokemon.Longitude });
-					pokemon.compassDirection = geolib.getCompassDirection(
-								{ latitude: location.coords.latitude, longitude: location.coords.longitude },
-								{ latitude: pokemon.Latitude, longitude: pokemon.Longitude });
 					here.push(pokemon);
 				});
 			});
