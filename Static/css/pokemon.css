@@ -1,0 +1,70 @@
+.pokemon-sprite {
+	background-image: url('../img/pokemon-sprites.png');
+    background-repeat: no-repeat;
+	height: 60px;
+    width: 60px;
+}
+
+.pokemon-bulbasaur {
+    background-position: 10px -12px;
+}
+
+.pokemon-ivysaur {   
+    background-position: -40px -12px;
+}
+
+.pokemon-venusaur {
+    background-position: -100px -12px;
+}
+
+.pokemon-charmander {
+    background-position: -160px -12px;
+}
+
+.pokemon-charmeleon {
+    background-position: -220px -12px;
+}
+
+.pokemon-charizard {
+    background-position: -280px -12px;
+}
+
+.pokemon-squirtle {
+	background-position: -345px -12px;
+}
+
+.pokemon-wartortle {
+	background-position: -400px -12px;
+}
+
+.pokemon-blastoise {
+	background-position: -460px -4px;
+}
+
+.pokemon-caterpie {
+	background-position: -517px -12px;
+	width: 55px;
+}
+
+.pokemon-kakuna {
+	background-position: -559px -12px;
+	width: 55px;
+}
+
+.pokemon-butterfree {
+	background-position: -610px -5px;
+}
+
+.pokemon-weedle {
+	background-position: -670px -12px;
+	width: 50px;
+}
+
+.pokemon-metapod {
+	background-position: -710px -12px;
+	width: 50px;
+}
+
+.pokemon-beedrill {
+	background-position: -760px -2px;
+}

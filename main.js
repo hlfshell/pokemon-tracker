@@ -2,7 +2,7 @@ const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const PokemonGo = require('pokemon-go-node-api');
-const pokeAPI = new PokemonGo.Pokeio();
+let pokeAPI = new PokemonGo.Pokeio();
 const geolib = require('geolib');
 const gps = require('gps');
 //const SerialPort = require('serialport');
@@ -18,8 +18,11 @@ let status = {
 
 //Until the GPS is loaded, we'll set this as our lat/long
 let location = {
-	latitude: 42.273850,
-	longitude: -71.809566
+	type: 'coords',
+	coords: {
+		latitude: 42.273850,
+		longitude: -71.809566
+	}
 };
 
 function createWindow(){
@@ -27,13 +30,17 @@ function createWindow(){
 	mainWindow = new BrowserWindow({
 		width: 320,
 		height: 240,
-		fullscreen: true,
-		alwaysOnTop: true,
-		setAutoHideMenuBar: true
+		//fullscreen: true,
+		//alwaysOnTop: true,
+		//setAutoHideMenuBar: true,
+		webPreferences: {
+			nodeIntegation: false
+		}
 	});
 	mainWindow.setMenu(null);
 	mainWindow.loadURL(`file://${__dirname}/index.html`);
 	mainWindow.on('closed', function(){ mainWindow = null; });
+	mainWindow.webContents.openDevTools();
 }
 
 app.on('ready', createWindow);
@@ -42,7 +49,6 @@ app.on('ready', createWindow);
 
 //Handle all the pokemon go stuff.
 let heartbeat;
-let nearby = [];
 
 function connectToPokemonGo(){
 	status.pokemongo = "connecting"
@@ -50,7 +56,7 @@ function connectToPokemonGo(){
 		if(err){ 
 			status.pokemongo = "disconnected"
 			console.error("Something has gone wrong with connecting to the server - trying again in 20 seconds", err);
-			setTimeout(connectToPokemon, 20000);
+			setTimeout(connectToPokemonGo, 20000);
 			return;
 		}
 
@@ -60,14 +66,35 @@ function connectToPokemonGo(){
 		heartbeat = setInterval(function(){
 			pokeAPI.Heartbeat(function(err, hb){
 				if(err) return handleHeartbeatFailure(err);
-				nearby = [];
+				let nearby = [];
+				let here = [];
+
+				hb.cells.forEach(function(cell){
+					if(cell.NearbyPokemon.length <= 0) return;
+
+					cell.NearbyPokemon.forEach(function(pokemon){
+						pokemon.name = pokeAPI.pokemonlist[parseInt(pokemon.PokedexNumber)-1].name;
+						nearby.push(pokemon);
+					});
+				});
+
 				hb.cells.forEach(function(cell){
 					if(cell.MapPokemon.length <= 0) return;
 					
 					cell.MapPokemon.forEach(function(pokemon){
-						announcePokemon(pokemon);
+						pokemon.name = pokeAPI.pokemonlist[parseInt(pokemon.PokedexTypeId)-1].name;
+
+						pokemon.distance = geolib.getDistance(
+									{ latitude: location.coords.latitude, longitude: location.coords.longitude },
+									{ latitude: pokemon.Latitude, longitude: pokemon.Longitude });
+						pokemon.compassDirection = geolib.getCompassDirection(
+									{ latitude: location.coords.latitude, longitude: location.coords.longitude },
+									{ latitude: pokemon.Latitude, longitude: pokemon.Longitude });
+						here.push(pokemon);
 					});
 				});
+
+				mainWindow.webContents.send('heartbeat', { herePokemon: here, nearbyPokemon: nearby });
 			});
 		}, 5000);
 
@@ -82,5 +109,7 @@ function handleHeartbeatFailure(err){
 	pokeAPI = new PokemonGo.Pokeio();
 	connectToPokemon();
 }
+
+connectToPokemonGo();
 
 //Finally, on request from the electron app return necessary information
