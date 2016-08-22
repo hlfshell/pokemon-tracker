@@ -5,6 +5,8 @@ const wss = new WebSocketServer({ port: 9001 });
 const GPS = require('./Models/GPS.js');
 const Scanner = require('./Models/Scanner.js');
 let scanner;
+const express = require('express');
+const app = express();
 
 //JSON object of pokemon credentials, with username/password for each
 const pokemonCredentials = require('./pokemon-credentials.json');
@@ -38,3 +40,8 @@ gps.connect(function(err){
 var onScan = function onScan(){
 	wss.clients.forEach(client => client.send(scanner.detectedPokemon));
 };
+
+app.use(express.static('Static'));
+app.get('/', (req, res) => res.sendFile("Static/views/index.html"));
+
+app.listen(9000);
