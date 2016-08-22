@@ -1,10 +1,9 @@
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
-const GPS = require('./Models/GPS');
+const GPS = require('./Models/GPS.js');
 const Scanner = require('./Models/Scanner.js');
 let scanner;
-const Trainer = require('./Trainer.js');
 
 //JSON object of pokemon credentials, with username/password for each
 const pokemonCredentials = require('./pokemon-credentials.json');
