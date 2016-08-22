@@ -1,25 +1,12 @@
-const ipc = nodeRequire('electron').ipcRenderer;
-let nearbyPokemon = [];
-let herePokemon = [];
+var pokemon = [];
+var lastUpdated = 0;
 
-ipc.on('heartbeat', function(event, data){
-	nearbyPokemon = data.nearbyPokemon;
-	herePokemon = data.herePokmon;
-	console.log(nearbyPokemon, herePokemon);
-	// update();
-});
+//First let's set up the websocket connection
+var ws = new WebSocket('ws://localhost:9000');
 
-function drawNearbyPokemon(){
-
-}
-
-function drawHerePokemon(){
-	herePokemon.forEach(function(pokemon){
-		
-	});
-}
-
-function update(){
-	drawNearbyPokemon();
-	drawHerePokemon();
-}
+//Handled incoming data IE pokemon!
+ws.onmessage = function(event){
+	console.log(JSON.parse(event.data));
+	pokemon = JSON.parse(event.data);
+	lastUpdated = new Date();
+};
