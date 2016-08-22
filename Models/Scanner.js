@@ -4,7 +4,7 @@ const Location = require('./Location.js');
 const Trainer = require('./Trainer.js');
 
 //JSON object of pokemon credentials, with username/password
-const pokemonCredentials = require('./pokemon-credentials.json');
+const pokemonCredentials = require('../pokemon-credentials.json');
 
 //As of writing, a scan radius for a trainer is 70 meters
 const trainerScanRadius = 70;
@@ -87,3 +87,5 @@ class Scanner {
 	}
 
 }
+
+module.exports = Scanner;

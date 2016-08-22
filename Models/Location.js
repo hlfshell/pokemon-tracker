@@ -37,7 +37,9 @@ class Location {
 	}
 
 	generateLocation(distance, bearing){
-		return new Location(geolib.computeDestinationPoint(this, distance, bearing);
+		return new Location(geolib.computeDestinationPoint(this, distance, bearing));
 	}
 
 }
+
+module.exports = Location;

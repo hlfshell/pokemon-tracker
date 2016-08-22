@@ -15,11 +15,11 @@ class GPS {
 		this.location = null;
 	}
 
-	_connect(cb){
+	connect(cb){
 		var self = this;
-		self.sp = new SerialPort.SerialPort(self.port, {
+		self.sp = new SerialPort(self.port, {
 			baudrate: 9600,
-			parser: Serialport.parser.readline('\r\n')
+			parser: SerialPort.parsers.readline('\r\n')
 		});
 
 		self.sp.on('data', function(data){
@@ -32,7 +32,7 @@ class GPS {
 			if(self.onUpdate) self.onUpdate();
 		});
 
-		self.on('open', cb);
+		self.sp.on('open', cb);
 	}
 
 	get currentLocation(){
@@ -40,3 +40,5 @@ class GPS {
 	}
 
 }
+
+module.exports = GPS;
